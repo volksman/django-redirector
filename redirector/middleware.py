@@ -65,7 +65,8 @@ class RedirectorMiddleware(object):
 
         if not redirect:
             # no existing redirect yet, create it now with the original path that was hit
-            redirect = Redirect(originating_url=full_path)
+            redirect = Redirect(originating_url=full_path,
+                site_id=settings.SITE_ID)
             redirect.save()
 
         # check for the referer to store a referral
