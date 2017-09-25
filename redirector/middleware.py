@@ -1,6 +1,7 @@
 from django import http
 from django.conf import settings
 from django.utils.timezone import now
+from django.contrib.sites.shortcuts import get_current_site
 
 from .models import Redirect, Referral
 from . import settings as redirect_settings
@@ -17,6 +18,7 @@ class RedirectorMiddleware(object):
     /dir/foo/bar/
     /dir/foo/bar
     """
+
     def get_response_class(self, redirect):
         """
         Utility function for determining which response class to use based on the redirect_type value.
@@ -35,31 +37,25 @@ class RedirectorMiddleware(object):
             return response
 
         full_path = request.get_full_path()
+        current_site = get_current_site(request)
         redirect = None
 
         # check to see if there is an existing redirect for the full path as is
         try:
-            redirect = Redirect.objects.get(originating_url=full_path)
+            redirect = Redirect.objects.get(site=current_site,
+                originating_url=full_path)
         except Redirect.DoesNotExist:
             pass
 
         # try adding a slash if there isn't and see if a redirect exists (may not be necessary)
-        if settings.APPEND_SLASH and not request.path.endswith('/'):
-            # This scenario should never be reached because CommonMiddleware adds the slash beforehand
-            path_len = len(request.path)
-            full_path = full_path[:path_len] + '/' + full_path[path_len:]
+        if request is None and settings.APPEND_SLASH and not \
+            request.path.endswith('/'):
 
             try:
-                redirect = Redirect.objects.get(originating_url=full_path)
-            except Redirect.DoesNotExist:
-                pass
-
-        # try removing the trailing slash to see if a redirect is found
-        if not redirect and request.path.endswith('/'):
-            # try removing the trailing slash to see if a redirect is found
-            full_path = request.path[:-1]
-            try:
-                redirect = Redirect.objects.get(originating_url=full_path)
+                redirect = Redirect.objects.get(
+                    site=current_site,
+                    originating_url=request.get_full_path(
+                        force_append_slash=True))
             except Redirect.DoesNotExist:
                 pass
 
