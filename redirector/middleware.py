@@ -59,22 +59,19 @@ class RedirectorMiddleware(object):
             except Redirect.DoesNotExist:
                 pass
 
-        if not redirect:
-            # no existing redirect yet, create it now with the original path that was hit
-            redirect = Redirect(originating_url=full_path,
-                site_id=settings.SITE_ID)
-            redirect.save()
-
         # check for the referer to store a referral
-        referer = request.META.get('HTTP_REFERER', redirect_settings.REFERER_NONE_VALUE)
-        referral, created = Referral.objects.get_or_create(referer_url=referer, redirect=redirect)
+        referer = request.META.get('HTTP_REFERER',
+            redirect_settings.REFERER_NONE_VALUE)
+        referral, created = Referral.objects.get_or_create(
+            referer_url=referer, redirect=redirect)
         referral.hits += 1
         referral.last_hit = now()
         referral.save()
 
         # if default 404 redirect is specified, do a temporary redirect
         if redirect_settings.DEFAULT_404_REDIRECT:
-            return http.HttpResponseRedirect(redirect_settings.DEFAULT_404_REDIRECT)
+            return http.HttpResponseRedirect(
+                redirect_settings.DEFAULT_404_REDIRECT)
 
         if redirect.redirect_to_url:
             response_class = self.get_response_class(redirect)
