@@ -59,14 +59,15 @@ class RedirectorMiddleware(object):
             except Redirect.DoesNotExist:
                 pass
 
-        # check for the referer to store a referral
-        referer = request.META.get('HTTP_REFERER',
-            redirect_settings.REFERER_NONE_VALUE)
-        referral, created = Referral.objects.get_or_create(
-            referer_url=referer, redirect=redirect)
-        referral.hits += 1
-        referral.last_hit = now()
-        referral.save()
+        if redirect:
+            # check for the referer to store a referral
+            referer = request.META.get('HTTP_REFERER',
+                redirect_settings.REFERER_NONE_VALUE)
+            referral, created = Referral.objects.get_or_create(
+                referer_url=referer, redirect=redirect)
+            referral.hits += 1
+            referral.last_hit = now()
+            referral.save()
 
         # if default 404 redirect is specified, do a temporary redirect
         if redirect_settings.DEFAULT_404_REDIRECT:
