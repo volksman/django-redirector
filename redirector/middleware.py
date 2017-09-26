@@ -69,14 +69,14 @@ class RedirectorMiddleware(object):
             referral.last_hit = now()
             referral.save()
 
-        # if default 404 redirect is specified, do a temporary redirect
-        if redirect_settings.DEFAULT_404_REDIRECT:
-            return http.HttpResponseRedirect(
-                redirect_settings.DEFAULT_404_REDIRECT)
+            # if default 404 redirect is specified, do a temporary redirect
+            if redirect_settings.DEFAULT_404_REDIRECT:
+                return http.HttpResponseRedirect(
+                    redirect_settings.DEFAULT_404_REDIRECT)
 
-        if redirect.redirect_to_url:
-            response_class = self.get_response_class(redirect)
-            return response_class(redirect.redirect_to_url)
+            if redirect.redirect_to_url:
+                response_class = self.get_response_class(redirect)
+                return response_class(redirect.redirect_to_url)
 
         # show the 404 page
         return response
