@@ -48,7 +48,7 @@ class RedirectorMiddleware(object):
             pass
 
         # try adding a slash if there isn't and see if a redirect exists (may not be necessary)
-        if request is None and settings.APPEND_SLASH and not \
+        if redirect is None and settings.APPEND_SLASH and not \
             request.path.endswith('/'):
 
             try:
