@@ -58,7 +58,7 @@ class RedirectAdmin (admin.ModelAdmin):
         css = {'all': ('redirector/hide_inline_header.css',)}
 
     form = RedirectAdminForm
-    fields = ('originating_url', 'redirect_to_url', 'redirect_type',)
+    fields = ('originating_url', 'redirect_to_url', 'redirect_type', 'site')
     list_display = ('originating_url', 'redirect_to_url', 'redirect_type',)
     list_editable = ('redirect_to_url', 'redirect_type')
     list_filter = (HasRedirectListFilter,)
