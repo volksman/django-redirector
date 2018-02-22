@@ -4,7 +4,7 @@ from django.utils.timezone import now
 from django.contrib.sites.shortcuts import get_current_site
 
 from .models import Redirect, Referral
-from . import settings as redirect_settings
+from redirector import settings as redirect_settings
 
 
 class RedirectorMiddleware(object):
