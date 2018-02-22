@@ -3,7 +3,6 @@ from __future__ import unicode_literals
 
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
-from django.contrib.sites.models import Site
 
 from . import settings
 
@@ -17,7 +16,7 @@ class Redirect (models.Model):
         verbose_name = _('redirect')
         verbose_name_plural = _('redirects')
 
-    site = models.ForeignKey(Site, models.CASCADE, verbose_name='site',
+    site = models.ForeignKey('sites.Site', models.CASCADE, verbose_name='site',
         related_name='redirector_site')
 
     originating_url = models.CharField(
